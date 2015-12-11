@@ -71,16 +71,20 @@ class client(object):
         return response_data
 
     def artist_get_tags(self, artist=None, mbid=None, user=None,
-                        autocorrect=1, raw=0):
-        """Artist: get tags for specific user.
-        
-        Parameters:
-        ----------
-        artist (Required, unless mbid): artist name
-        mbid (Optional): musicbrainz id for the artist
-        user (Optional): username; required if not authenticated
-        autocorrect[0|1] (Optional): correct spelling
-        raw: set raw=1 for full json
+                        autocorrect=1):
+        """Artist: get artist tags by specific user.
+
+        http://www.last.fm/api/show/artist.getTags
+
+        :param artist: artist name, required unless mbid
+        :type artist: str
+        :param mbid: musicbrainz id for the artist, optional
+        :type mbid: str
+        :param user: username, required if not authenticated
+        :type user: str
+        :param autocorrect: autocorrect spelling, [0|1]
+        :type autocorrect: int
+        :rtype: list if raw=0 or dict if raw=1
         """
         if not artist and not mbid:
             raise TypeError("Must provide artist or mbid")
@@ -97,62 +101,5 @@ class client(object):
 
         if user:
             args["user"] = user
-        
-        response = self._send_request(args)
-        print('response:\n', response, '\n\n')
-
-        if raw:
-            return response
-        else:
-            processed = []
-            for tag in response[u"tags"]["tag"]:
-                processed.append(tag[u"name"])
-
-            return processed
-
-    def artist_get_top_tags(self, artist=None, mbid=None, autocorrect=1,
-            raw=0):
-        """Artist: get top tags from all users.
-        
-        Parameters:
-        ----------
-        artist (Required, unless mbid): artist name
-        mbid (Optional): musicbrainz id for the artist
-        autocorrect[0|1] (Optional): correct spelling
-        raw: set raw=1 for full json
-        """
-        if not artist and not mbid:
-            raise TypeError("Must provide artist or mbid")
-        
-        args = {"method": "artist.gettoptags", "autocorrect":1}
-
-        if artist:
-            args["artist"] = artist
-        elif mbid:
-            args["mbid"] = mbid
-
-        response = self._send_request(args)
-
-        if raw:
-            return response
-        else:
-            processed = {}
-            for tag in response[u"toptags"]["tag"]:
-                processed[tag[u"name"]] = tag[u"count"]
-
-            return processed
-
-
-    def tag_get_top_artists(self, tag, limit=3):
-        """Tag: get top artists by tag."""
-        args = {"method": "tag.gettopartists", "limit": limit, "tag": tag}
-        
-        return self._send_request(args)
-        
-    def track_get_similar(self, track, artist, limit=3):
-        """Track: get similar tracks."""
-        args = {"method": "track.getsimilar", "limit": limit,
-                "track": track, "artist": artist}
 
         return self._send_request(args)
-
