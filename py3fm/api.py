@@ -72,7 +72,7 @@ class client(object):
 
     def artist_get_tags(self, artist=None, mbid=None, user=None,
                         autocorrect=1):
-        """Artist: get artist tags by specific user.
+        """Get the tags applied by an individual user to an artist on Last.fm.
 
         http://www.last.fm/api/show/artist.getTags
 
@@ -84,7 +84,7 @@ class client(object):
         :type user: str
         :param autocorrect: autocorrect spelling, [0|1]
         :type autocorrect: int
-        :rtype: list if raw=0 or dict if raw=1
+        :rtype: dict
         """
         if not artist and not mbid:
             raise TypeError("Must provide artist or mbid")
@@ -92,7 +92,8 @@ class client(object):
         if not self.authenticated and not user:
             raise TypeError("If user not authenticated, must provide user.")
 
-        args = {"method": "artist.gettags", "autocorrect": 1}
+        args = {'method': 'artist.gettags',
+                'autocorrect': autocorrect}
 
         if artist:
             args["artist"] = artist
@@ -101,5 +102,38 @@ class client(object):
 
         if user:
             args["user"] = user
+
+        return self._send_request(args)
+
+    def artist_get_top_albums(self, artist=None, mbid=None, autocorrect=1,
+                              page=1, limit=10):
+        """Get the top albums for an artist on Last.fm, ordered by popularity.
+
+        http://www.last.fm/api/show/artist.getTopAlbums
+
+        :param artist: artist name, required unless mbid
+        :type artist: str
+        :param mbid: musicbrainz id for the artist, optional
+        :type mbid: str
+        :param autocorrect: autocorrect spelling, [0|1]
+        :type autocorrect: int
+        :param page: the page number to fetch, default page=1
+        :type page: int
+        :param limit: the number of results to fetch per page, default limit=10
+        :type limit: int
+        :rtype: dict
+        """
+        if not artist and not mbid:
+            raise TypeError("Must provide artist or mbid")
+
+        args = {'method': 'artist.gettopalbums',
+                'autocorrect': autocorrect,
+                'page': page,
+                'limit': limit}
+
+        if artist:
+            args["artist"] = artist
+        elif mbid:
+            args["mbid"] = mbid
 
         return self._send_request(args)
