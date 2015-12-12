@@ -11,4 +11,4 @@ py3fm -- a Python 3 package for the lastfm api.
 """
 from .api import client
 
-__all__ = [client]
+__all__ = ['client']
