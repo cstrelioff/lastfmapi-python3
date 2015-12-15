@@ -70,6 +70,21 @@ class client(object):
 
         return response_data
 
+    def artist_get_correction(self, artist):
+        '''Use the last.fm corrections data to check whether the supplied
+        artist has a correction to a canonical artist.
+
+        http://www.last.fm/api/show/artist.getCorrection
+
+        :param artist: artist name, required
+        :type artist: str
+        :rtype: dict
+        '''
+        args = {'method': 'artist.getcorrection',
+                'artist': artist}
+
+        return self._send_request(args)
+
     def artist_get_tags(self, artist=None, mbid=None, user=None,
                         autocorrect=1):
         '''Get the tags applied by an individual user to an artist on Last.fm.
