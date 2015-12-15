@@ -29,7 +29,8 @@ class client(object):
 
         self.last_call = time.time()
 
-        self.kwargs = {'api_key': self.API_KEY, 'format': 'json'}
+        self.kwargs = {'api_key': self.API_KEY,
+                       'format': 'json'}
 
         # set to True when user authenticated
         self.authenticated = False
@@ -82,6 +83,43 @@ class client(object):
         '''
         args = {'method': 'artist.getcorrection',
                 'artist': artist}
+
+        return self._send_request(args)
+
+    def artist_get_events(self, artist=None, mbid=None, autocorrect=1,
+                          page=1, limit=10, festival=0):
+        '''Get a list of upcoming events for this artist.
+
+        http://www.last.fm/api/show/artist.getEvents
+
+        :param artist: artist name, required unless mbid
+        :type artist: str
+        :param mbid: musicbrainz id for the artist, optional
+        :type mbid: str
+        :param autocorrect: autocorrect spelling, [0|1]
+        :type autocorrect: int
+        :param page: the page number to fetch, default page=1
+        :type page: int
+        :param limit: the number of results to fetch per page, default limit=10
+        :type limit: int
+        :param festival: Whether only festivals should be returned, or all
+        events, [0|1], optional.
+        :type festival: int
+        :rtype: dict
+        '''
+        if not artist and not mbid:
+            raise TypeError('Must provide artist or mbid')
+
+        args = {'method': 'artist.getevents',
+                'autocorrect': autocorrect,
+                'page': page,
+                'limit': limit,
+                'festival': festival}
+
+        if artist:
+            args['artist'] = artist
+        elif mbid:
+            args['mbid'] = mbid
 
         return self._send_request(args)
 
