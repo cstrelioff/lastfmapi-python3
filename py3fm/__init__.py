@@ -11,4 +11,7 @@ py3fm -- a Python 3 package for the lastfm api.
 """
 from .api import client
 
-__all__ = ['client']
+from .auth import authenticate
+
+__all__ = ['client',
+           'authenticate']
